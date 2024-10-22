@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>搶票練習</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+        #runawayButton {
+            position: absolute;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        #runawayButton:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <button id="runawayButton">確定(10)</button>
+    <audio id="audio" src="a.mp3"></audio>
+    <script>
+        let countdown = 10;
+        let countdownStarted = false;
+        let isGameOver = false;
+        const button = document.getElementById('runawayButton');
+        const audio = document.getElementById('audio');
+
+        // 預先載入音訊
+        audio.load();
+
+        button.addEventListener('mouseover', function() {
+            // 如果遊戲結束，就不要移動按鈕
+            if (isGameOver) return;
+
+            // 獲取視窗的寬度和高度
+            const windowWidth = window.innerWidth;
+            const windowHeight = window.innerHeight;
+            
+            // 生成一個新的隨機位置
+            const newX = Math.random() * (windowWidth - this.offsetWidth);
+            const newY = Math.random() * (windowHeight - this.offsetHeight);
+            
+            // 設置按鈕的新位置
+            this.style.left = newX + 'px';
+            this.style.top = newY + 'px';
+
+            // 開始倒數
+            if (!countdownStarted) {
+                countdownStarted = true;
+                const countdownInterval = setInterval(function() {
+                    if (countdown > 0) {
+                        countdown--;
+                        button.textContent = `確定(${countdown})`;
+                    } else {
+                        button.textContent = "下次再努力";
+                        isGameOver = true; // 設置遊戲結束狀態
+                        // 使用點擊事件來播放音訊
+                        button.onclick = function() {
+                            audio.play().catch(function(error) {
+                                console.error("音訊播放失敗: ", error);
+                            });
+                        }
+                        clearInterval(countdownInterval);
+                    }
+                }, 1000);
+            }
+        });
+    </script>
+</body>
+</html>
